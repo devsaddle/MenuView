@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "ShowBtn.h"
+#import "MenuView.h"
 
 @interface ViewController ()
 
@@ -52,6 +53,14 @@
 
 - (void)btnClick {
     NSLog(@"-----%@",NSStringFromCGPoint(self.showBtn.frame.origin));
+    CGFloat x = self.showBtn.frame.origin.x + self.showBtn.frame.size.width/2;
+    CGFloat y = self.showBtn.frame.origin.y + self.showBtn.frame.size.height;
+
+    
+    MenuView *meunView = [[MenuView alloc] initWithFrame:CGRectMake(x, y, 170, 270)];
+    meunView.arrowDirection = ArrowDirectionMiddle;
+    meunView.fillColor = [UIColor colorWithWhite:0.286 alpha:0.8];
+    [meunView show];
 }
 
 @end

@@ -24,18 +24,27 @@
 
 @implementation MenuView
 
+
 - (void)show {
-    MenuCoverView *view = [[MenuCoverView alloc] initWithFrame:CGRectMake(50, 100, 150, 250)];
-    view->_arrowDirection = self.arrowDirection;
-    view->_fillColor = self.fillColor;
-    [self addSubview:view];
-    
+  
+    [self creatCoverView];
+
    UIWindow *window = [UIApplication sharedApplication].keyWindow;
     self.frame = window.bounds;
     [window addSubview:self];
 }
 
+- (void)creatCoverView {
+    MenuCoverView *view = [[MenuCoverView alloc] initWithFrame:self.frame];
+    view.backgroundColor = self.fillColor;
+    view->_arrowDirection = self.arrowDirection;
+    view->_fillColor = self.fillColor;
+    [self addSubview:view];
+}
 
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self removeFromSuperview];
+}
 
 @end
 
@@ -71,6 +80,7 @@
     CGContextAddLines(context, sPoints, 3);//添加线
     CGContextClosePath(context);//封起来
     CGContextSetFillColorWithColor(context, _fillColor.CGColor);//填充颜色
+    CGContextSetStrokeColorWithColor(context, _fillColor.CGColor);
     CGContextDrawPath(context, kCGPathFillStroke); //根据坐标绘制路径
     
 }
