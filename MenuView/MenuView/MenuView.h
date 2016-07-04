@@ -10,8 +10,8 @@
 
 // MenuView 显示类型
 typedef NS_ENUM(NSInteger, MenuViewStyle) {
-    MenuViewStyleDefault = 0,
-    
+    MenuViewStyleSingleRank = 0, // 单列显示
+    MenuViewStyleMoreRank,       // 多列显示
 };
 
 // MenuView 箭头位置
@@ -21,45 +21,27 @@ typedef NS_ENUM(NSInteger, ArrowDirection) {
     ArrowDirectionRight,
     ArrowDirectionMiddle
 };
+@class MenuView;
 
+#pragma mark - MenuViewDataSource
 
+@protocol MenuViewDataSource <NSObject>
 
-@protocol UIAlertViewDelegate;
-@class UILabel, UIToolbar, UITabBar, UIWindow, UIBarButtonItem, UIPopoverController;
+@required
 
-@interface MenuView : UIView
-
-- (instancetype)initWithPoint:(CGPoint)point inView:(UIView *)fromeView;
-
-@property(nonatomic,assign) id delegate;       // weak reference
-
-@property(nonatomic,readonly) NSInteger numberOfButtons;
-
-@property(nonatomic,strong) UIColor *fillColor;
-
-@property(nonatomic,readonly,getter=isVisible) BOOL visible;
-
-// ArrowDirection -style defaults to ArrowDirectionDefault
-@property(nonatomic,assign) ArrowDirection arrowDirection;
-
-// MenuViewStyle -style defaults to MenuViewStyleDefault
-@property(nonatomic,assign) MenuViewStyle menuStyle;
-
-
-// shows popup alert animated.
-- (void)show;
-
+- (NSInteger)numberOfRowsForMenuView:(MenuView *)menuView;
+- (NSArray *)dataForMenuView:(MenuView *)menuView;
+@optional
+- (UIView *)menuView:(MenuView *)menuView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
+- (CGFloat)menuView:(MenuView *)menuView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
 
+#pragma mark - MenuViewDelegate
 @protocol MenuViewDelegate <NSObject>
 @optional
 
-// Called when a button is clicked. The view will be automatically dismissed after this call returns
 - (void)menuView:(MenuView *)menuView clickedButtonAtIndex:(NSInteger)buttonIndex;
-
-// Called when we cancel a view (eg. the user clicks the Home button). This is not called when the user clicks the cancel button.
-// If not defined in the delegate, we simulate a click in the cancel button
 - (void)menuViewDismiss:(MenuView *)menuView;
 
 
@@ -70,5 +52,33 @@ typedef NS_ENUM(NSInteger, ArrowDirection) {
 - (void)menuView:(MenuView *)menuView willDismissWithButtonIndex:(NSInteger)buttonIndex; // before animation and hiding view
 - (void)menuView:(MenuView *)menuView didDismissWithButtonIndex:(NSInteger)buttonIndex;  // after animation
 
+@end
+
+@interface MenuView : UIView
+
+- (instancetype)initWithPoint:(CGPoint)point inView:(UIView *)fromeView;
+
+@property(nonatomic,assign) id<MenuViewDelegate> delegate;       // weak reference
+@property(nonatomic,assign) id<MenuViewDataSource> dataSource;       // weak reference
+
+@property(nonatomic,readonly) NSInteger numberOfButtons;
+
+@property(nonatomic,strong) UIColor *fillColor;
+
+
+// ArrowDirection -style defaults to ArrowDirectionDefault
+@property(nonatomic,assign) ArrowDirection arrowDirection;
+
+// MenuViewStyle -style defaults to MenuViewStyleSingleRank
+@property(nonatomic,assign) MenuViewStyle menuStyle;
+
+
+// shows popup alert animated.
+- (void)show;
+
 
 @end
+
+
+
+

@@ -438,6 +438,7 @@
 				1C9B46791D29427900D5C7EF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1C9B467A1D29427900D5C7EF /* Build configuration list for PBXNativeTarget "MenuViewTests" */ = {
 			isa = XCConfigurationList;
@@ -446,6 +447,7 @@
 				1C9B467C1D29427900D5C7EF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

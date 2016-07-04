@@ -10,7 +10,7 @@
 #import "ShowBtn.h"
 #import "MenuView.h"
 
-@interface ViewController ()
+@interface ViewController ()<MenuViewDataSource>
 
 @property (nonatomic,strong)ShowBtn *showBtn;
 @end
@@ -39,12 +39,15 @@
         [_showBtn setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
         [_showBtn setTitleColor:[UIColor purpleColor] forState:UIControlStateHighlighted];
         [_showBtn.titleLabel setFont:[UIFont systemFontOfSize:14]];
-        _showBtn.layer.borderWidth = 2;
-        _showBtn.layer.borderColor = [UIColor grayColor].CGColor;
         _showBtn.layer.cornerRadius = 5;
-        _showBtn.layer.masksToBounds = YES;
+        _showBtn.layer.shadowOffset = CGSizeMake(0, 3);
+        _showBtn.layer.shadowRadius = 5.0;
+        _showBtn.layer.shadowColor = [UIColor blackColor].CGColor;
+        _showBtn.layer.shadowOpacity = 0.8;
         _showBtn.showsTouchWhenHighlighted = YES;
         [_showBtn addTarget:self action:@selector(btnClick) forControlEvents:UIControlEventTouchUpInside];
+    
+
     }
     return _showBtn;
 }
@@ -59,8 +62,15 @@
     
     MenuView *meunView = [[MenuView alloc] initWithFrame:CGRectMake(x, y, 170, 270)];
     meunView.arrowDirection = ArrowDirectionMiddle;
-    meunView.fillColor = [UIColor colorWithWhite:0.286 alpha:0.8];
+    meunView.fillColor = [UIColor colorWithWhite:0.286 alpha:1.0];
+    meunView.dataSource = self;
     [meunView show];
 }
 
+- (NSInteger)numberOfRowsForMenuView:(MenuView *)menuView {
+    return 9;
+}
+- (NSArray *)dataForMenuView:(MenuView *)menuView {
+    return @[@"卡萨丁",@"是的",@"玩儿",@"官方",@"全文",@"卡拉胶",@"怕啥",@"去我",@"增加"];
+}
 @end
