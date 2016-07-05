@@ -32,7 +32,7 @@ typedef NS_ENUM(NSInteger, ArrowDirection) {
 - (NSInteger)numberOfRowsForMenuView:(MenuView *)menuView;
 - (NSArray *)dataForMenuView:(MenuView *)menuView;
 @optional
-- (UIView *)menuView:(MenuView *)menuView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
+- (UICollectionViewCell *)menuView:(MenuView *)menuView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 - (CGFloat)menuView:(MenuView *)menuView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
 
 @end

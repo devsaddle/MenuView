@@ -60,7 +60,7 @@
     CGFloat y = self.showBtn.frame.origin.y + self.showBtn.frame.size.height;
 
     
-    MenuView *meunView = [[MenuView alloc] initWithFrame:CGRectMake(x, y, 170, 270)];
+    MenuView *meunView = [[MenuView alloc] initWithFrame:CGRectMake(x, y, 120, 200)];
     meunView.arrowDirection = ArrowDirectionMiddle;
     meunView.fillColor = [UIColor colorWithWhite:0.286 alpha:1.0];
     meunView.dataSource = self;
