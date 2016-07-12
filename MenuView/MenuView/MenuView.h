@@ -52,13 +52,15 @@ typedef NS_ENUM(NSInteger, ArrowDirection) {
 - (void)menuView:(MenuView *)menuView willDismissWithButtonIndex:(NSInteger)buttonIndex; // before animation and hiding view
 - (void)menuView:(MenuView *)menuView didDismissWithButtonIndex:(NSInteger)buttonIndex;  // after animation
 
+- (void)menuView:(MenuView *)menuView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+
 @end
 
 @interface MenuView : UIView
 
-- (instancetype)initWithPoint:(CGPoint)point inView:(UIView *)fromeView;
+- (instancetype)initWithFrame:(CGRect)frame inView:(UIView *)fromeView;
 
-@property(nonatomic,assign) id<MenuViewDelegate> delegate;       // weak reference
+@property(nonatomic,assign) id<MenuViewDelegate> delegate;          // weak reference
 @property(nonatomic,assign) id<MenuViewDataSource> dataSource;       // weak reference
 
 @property(nonatomic,readonly) NSInteger numberOfButtons;
@@ -73,7 +75,7 @@ typedef NS_ENUM(NSInteger, ArrowDirection) {
 @property(nonatomic,assign) MenuViewStyle menuStyle;
 
 
-// shows popup alert animated.
+// shows popup menu animated.
 - (void)show;
 
 

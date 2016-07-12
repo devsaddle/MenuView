@@ -55,12 +55,12 @@
 #pragma mark - Click
 
 - (void)btnClick {
-    NSLog(@"-----%@",NSStringFromCGPoint(self.showBtn.frame.origin));
     CGFloat x = self.showBtn.frame.origin.x + self.showBtn.frame.size.width/2;
     CGFloat y = self.showBtn.frame.origin.y + self.showBtn.frame.size.height;
 
-    
-    MenuView *meunView = [[MenuView alloc] initWithFrame:CGRectMake(x, y, 120, 200)];
+    NSLog(@"---x:%f--y:%f",x,y);
+
+    MenuView *meunView = [[MenuView alloc] initWithFrame:CGRectMake(x, y, 137, 200)];
     meunView.arrowDirection = ArrowDirectionMiddle;
     meunView.fillColor = [UIColor colorWithWhite:0.286 alpha:1.0];
     meunView.dataSource = self;

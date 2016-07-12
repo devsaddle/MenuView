@@ -13,7 +13,7 @@
 #define arrowMargin   10    // 箭头内部中心间距(三角底边长度一半)
 #define coverViewRadius  3  // 圆角
 #define collectionCellIden   @"MenuViewCellIden"    // cell Identifier
-#define cellHeight      40    // cell 高度
+#define cellHeight      44    // cell 高度
 #define cellContentSize  CGSizeMake(100, 40)
 
 @interface MenuCoverView : UIView
@@ -24,12 +24,12 @@
 }
 @end
 
-@interface MenuView ()<UITableViewDelegate, UITableViewDataSource,UICollectionViewDelegate,UICollectionViewDataSource>
+@interface MenuView ()<UICollectionViewDelegate,UICollectionViewDataSource>
 {
     UITableView *_tableView;
     MenuCoverView *_coverView;
     UICollectionView *_collectionView;
-
+    BOOL _isShowing;
 }
 
 @end
@@ -39,6 +39,7 @@
 {
     @private
     UILabel *_textLable;
+    CALayer *_separateLayer;
 }
 + (instancetype)initMenuCellWithCollectioView:(UICollectionView *)collectionView forIndexPath:(NSIndexPath *)indexPath;
 - (void)setData:(NSString *)str;
@@ -46,6 +47,13 @@
 
 @implementation MenuView
 
+- (instancetype)initWithFrame:(CGRect)frame inView:(UIView *)fromeView {
+    self = [super initWithFrame:frame];
+    if (self) {
+        
+    }
+    return self;
+}
 - (void)layoutSubviews {
     [super layoutSubviews];
     CGFloat y = arrowHeight;
@@ -55,15 +63,23 @@
    
     _collectionView.frame = (CGRect) {
         .origin.y = y + 3,
-        .size = {_coverView.frame.size.width,_coverView.frame.size.height - y - 3}
+        .size = {_coverView.frame.size.width,_coverView.frame.size.height - y - 5}
     };
 
 }
 - (void)show {
   
-   UIWindow *window = [UIApplication sharedApplication].keyWindow;
-    self.frame = window.bounds;
-    [window addSubview:self];
+    if (_isShowing) return;
+    _isShowing = YES;
+    [UIView animateWithDuration:0.35f delay:0 usingSpringWithDamping:0.9f initialSpringVelocity:0.7f options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionLayoutSubviews animations:^{
+        
+        UIWindow *window = [UIApplication sharedApplication].keyWindow;
+        self.frame = window.bounds;
+        self.alpha = 1.0;
+        [window addSubview:self];
+        
+    } completion:NULL];
+    
 }
 
 - (void)creatSubView {
@@ -78,7 +94,7 @@
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
     
     UICollectionView *collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
-    collectionView.backgroundColor = [UIColor clearColor];
+    collectionView.backgroundColor =  [UIColor clearColor];
     collectionView.delegate = self;
     collectionView.dataSource = self;
     [collectionView registerClass:[MenuCell class] forCellWithReuseIdentifier:collectionCellIden];
@@ -106,7 +122,7 @@
     MenuCell *cell = (MenuCell*)[self contentCellWithCollectionView:collectionView forIndexPath:indexPath];
     
     UIView *seletView = [[UIView alloc] initWithFrame:cell.bounds];
-    seletView.backgroundColor = [UIColor redColor];
+    seletView.backgroundColor = [UIColor grayColor];
     cell.selectedBackgroundView = seletView;
     if ([cell isKindOfClass:[MenuCell class]]) {
         [cell setData:[[self dataSorce] objectAtIndex:indexPath.row]];
@@ -143,11 +159,15 @@
 //}
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
-    NSLog(@"%ld",indexPath.row);
+    if (self.delegate && [self.delegate respondsToSelector:@selector(menuView:didSelectRowAtIndexPath:)]) {
+        [self.delegate menuView:self didSelectRowAtIndexPath:indexPath];
+    }
 }
+
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
 }
+
 #pragma mark - DataSource 
 - (void)setDataSource:(id<MenuViewDataSource>)dataSource {
     
@@ -169,7 +189,7 @@
         contenView = [self.dataSource menuView:self cellForRowAtIndexPath:indexPath];
     } else {
         contenView = [MenuCell initMenuCellWithCollectioView:collectionView forIndexPath:indexPath];
-//        contenView.backgroundColor = self.fillColor;
+        contenView.backgroundColor = self.fillColor;
     }
     return contenView;
 }
@@ -190,38 +210,6 @@
 
 
 @implementation MenuCoverView
-//
-//- (void)drawRect:(CGRect)rect {
-//    CGFloat x = 0;
-//    CGFloat y = 0;
-//    
-//    if (self.arrowDirection == ArrowDirectionDefault) {
-//        
-//    } else if (self.arrowDirection == ArrowDirectionLeft) {
-//        x = leftMargin;
-//        y = arrowHeight;
-//    } else if (self.arrowDirection == ArrowDirectionRight) {
-//        x = rect.size.width - (rightMargin + 2*arrowMargin);
-//        y = arrowHeight;
-//    } else if (self.arrowDirection == ArrowDirectionMiddle) {
-//        x = rect.size.width/2 - arrowMargin;
-//        y = arrowHeight;
-//    }
-//    
-//    
-//    CGContextRef context = UIGraphicsGetCurrentContext();
-//    /*画三角形*/
-//    //只要三个点就行跟画一条线方式一样，把三点连接起来
-//    CGPoint sPoints[3];//坐标点
-//    sPoints[0] =CGPointMake(x, y);//坐标1
-//    sPoints[1] =CGPointMake(x + 2*arrowMargin, y);//坐标2
-//    sPoints[2] =CGPointMake(x + arrowMargin, y - arrowHeight);//坐标3
-//    CGContextAddLines(context, sPoints, 3);//添加线
-//    CGContextClosePath(context);//封起来
-//    CGContextSetFillColorWithColor(context, _fillColor.CGColor);//填充颜色
-//    CGContextSetLineWidth(context, 0); // 线宽度
-//    CGContextDrawPath(context, kCGPathFillStroke); //根据坐标绘制路径
-//}
 
 - (void)drawRect:(CGRect)rect {
     CGFloat x = 0;
@@ -258,14 +246,6 @@
     CGContextDrawPath(context, kCGPathFillStroke); //根据坐标绘制路径
     
     /*画矩形*/
-//    CGContextFillRect(context,CGRectMake(0, y, rect.size.width, rect.size.height-y));//填充框
-//    //矩形，并填弃颜色
-//    CGContextSetLineWidth(context, 0);//线的宽度
-//    CGContextSetFillColorWithColor(context, _fillColor.CGColor);//填充颜色
-//    CGContextAddRect(context,CGRectMake(0, y, rect.size.width, rect.size.height-y));//画方框
-//    CGContextDrawPath(context, kCGPathFillStroke);//绘画路径
-    
-
     CGFloat radius = coverViewRadius;
     // 移动到初始点
     CGContextMoveToPoint(context, x + radius, y);
@@ -324,7 +304,15 @@
     return self;
 }
 
-
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    _separateLayer.frame = (CGRect) {
+        .origin.x = 1,
+        .origin.y = self.frame.size.height,
+        .size.width = self.frame.size.width - 1,
+        .size.height = 0.5
+    };
+}
 - (void)initViews {
     _textLable = [[UILabel alloc] initWithFrame:self.bounds];
     [_textLable setTextColor:[UIColor whiteColor]];
@@ -333,6 +321,11 @@
     [_textLable setBackgroundColor:[UIColor clearColor]];
     [_textLable setFont:[UIFont systemFontOfSize:14.0]];
     [self.contentView addSubview:_textLable];
+    
+    
+    _separateLayer = [CALayer layer];
+    _separateLayer.backgroundColor = [UIColor colorWithWhite:0.386 alpha:1.0].CGColor;
+    [self.contentView.layer addSublayer:_separateLayer];
 }
 
 
