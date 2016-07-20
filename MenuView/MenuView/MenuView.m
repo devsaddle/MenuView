@@ -68,7 +68,7 @@
 
 }
 - (void)show {
-  
+    
     if (_isShowing) return;
     _isShowing = YES;
     [UIView animateWithDuration:0.35f delay:0 usingSpringWithDamping:0.9f initialSpringVelocity:0.7f options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionLayoutSubviews animations:^{
