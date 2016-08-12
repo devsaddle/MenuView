@@ -10,7 +10,7 @@
 #import "ShowBtn.h"
 #import "MenuView.h"
 
-@interface ViewController ()<MenuViewDataSource>
+@interface ViewController ()<MenuViewDataSource,MenuViewDelegate>
 
 @property (nonatomic,strong)ShowBtn *showBtn;
 @end
@@ -64,13 +64,47 @@
     meunView.arrowDirection = ArrowDirectionMiddle;
     meunView.fillColor = [UIColor colorWithWhite:0.286 alpha:1.0];
     meunView.dataSource = self;
+    meunView.delegate = self;
     [meunView show];
 }
 
 - (NSInteger)numberOfRowsForMenuView:(MenuView *)menuView {
-    return 9;
+    return 8;
 }
 - (NSArray *)dataForMenuView:(MenuView *)menuView {
+    
+    NSArray *imageArray = [NSArray arrayWithObjects:[UIImage imageNamed:@"fair"],
+                           [UIImage imageNamed:@"fun"],
+                           [UIImage imageNamed:@"monument"],
+                           [UIImage imageNamed:@"snack"],
+                           [UIImage imageNamed:@"transport_1432"],
+                           [UIImage imageNamed:@"transport_1434"],
+                           [UIImage imageNamed:@"transport_1435"],
+                           [UIImage imageNamed:@"transport_965"], nil];
+    
+    return imageArray;
     return @[@"卡萨丁",@"是的",@"玩儿",@"官方",@"全文",@"卡拉胶",@"怕啥",@"去我",@"增加"];
 }
+//- (UICollectionViewCell *)contentCellWithCollectionView:(UICollectionView *)collectionView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+//
+//    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:collectionCellIdentifier forIndexPath:indexPath];
+//    
+//    
+//    UILabel *lab = [[UILabel alloc] init];
+//    lab.text = [NSString stringWithFormat:@"第  %ld",indexPath.row];
+//    [lab sizeToFit];
+//    [cell.contentView addSubview:lab];
+//    
+//    return cell;
+//    
+//}
+
+- (CGSize)menuView:(MenuView *)menuView imageSizeForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return CGSizeMake(20, 30);
+}
+
+- (void)menuView:(MenuView *)menuView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"%ld",indexPath.row);
+}
+
 @end

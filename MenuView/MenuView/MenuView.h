@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#define collectionCellIdentifier   @"MenuViewCellIdentifier"    // cell Identifier
+
 // MenuView 显示类型
 typedef NS_ENUM(NSInteger, MenuViewStyle) {
     MenuViewStyleSingleRank = 0, // 单列显示
@@ -32,8 +34,14 @@ typedef NS_ENUM(NSInteger, ArrowDirection) {
 - (NSInteger)numberOfRowsForMenuView:(MenuView *)menuView;
 - (NSArray *)dataForMenuView:(MenuView *)menuView;
 @optional
-- (UICollectionViewCell *)menuView:(MenuView *)menuView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
+/*!
+ *  自定义cell
+ *  必须注册 cell 的 Identifier 为 collectionCellIdentifier
+ */
+- (UICollectionViewCell *)contentCellWithCollectionView:(UICollectionView *)collectionView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 - (CGFloat)menuView:(MenuView *)menuView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
+- (CGSize)menuView:(MenuView *)menuView imageSizeForRowAtIndexPath:(NSIndexPath *)indexPath;
+
 
 @end
 
@@ -41,18 +49,9 @@ typedef NS_ENUM(NSInteger, ArrowDirection) {
 @protocol MenuViewDelegate <NSObject>
 @optional
 
-- (void)menuView:(MenuView *)menuView clickedButtonAtIndex:(NSInteger)buttonIndex;
-- (void)menuViewDismiss:(MenuView *)menuView;
-
-
-- (void)willPresentMenuView:(MenuView *)menuView;  // before animation and showing view
-- (void)didPresentMenuView:(MenuView *)menuView;   // after animation
-
-
-- (void)menuView:(MenuView *)menuView willDismissWithButtonIndex:(NSInteger)buttonIndex; // before animation and hiding view
-- (void)menuView:(MenuView *)menuView didDismissWithButtonIndex:(NSInteger)buttonIndex;  // after animation
-
 - (void)menuView:(MenuView *)menuView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (UIEdgeInsets)menuView:(MenuView *)menuView imageEdgeInsetsAtIndexPath:(NSIndexPath *)indexPath;
+- (UIEdgeInsets)menuView:(MenuView *)menuView titleEdgeInsetsAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
 
