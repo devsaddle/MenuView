@@ -65,9 +65,9 @@
     CGFloat y = self.showBtn.frame.origin.y + self.showBtn.frame.size.height;
 
     NSLog(@"---x:%f--y:%f",x,y);
-    
     MenuView *meunView = [[MenuView alloc] initWithFrame:CGRectMake(x, y, 137, 200)];
     meunView.arrowDirection = ArrowDirectionDefault;
+    meunView.selectedIndex = [NSIndexPath indexPathForRow:2 inSection:0];
     meunView.dataSource = self;
     meunView.delegate = self;
     [meunView show];
@@ -88,7 +88,7 @@
                            [UIImage imageNamed:@"transport_965"], nil];
     
     return imageArray;
-    return @[@"卡萨丁",@"是的",@"玩儿",@"官方",@"全文",@"卡拉胶",@"怕啥",@"去我",@"增加"];
+    return @[@"卡萨丁",@"是的",@"玩儿",@"官方",@"全文",@"卡拉胶",@"怕啥",@"去我"];
 }
 //- (UICollectionViewCell *)contentCellWithCollectionView:(UICollectionView *)collectionView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 //
@@ -117,6 +117,11 @@
 
 - (void)menuView:(MenuView *)menuView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSLog(@"%ld",indexPath.row);
+}
+
+- (id)menuView:(MenuView *)menuView selectStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return [UIImage imageNamed:@"radio"];
+    return [UIColor orangeColor];
 }
 
 @end

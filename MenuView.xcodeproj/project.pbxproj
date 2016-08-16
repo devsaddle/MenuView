@@ -16,6 +16,7 @@
 		1C9B46741D29427900D5C7EF /* MenuViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C9B46731D29427900D5C7EF /* MenuViewTests.m */; };
 		1C9B467F1D2945F200D5C7EF /* ShowBtn.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C9B467E1D2945F200D5C7EF /* ShowBtn.m */; };
 		1C9B46831D294A3D00D5C7EF /* MenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C9B46821D294A3D00D5C7EF /* MenuView.m */; };
+		7C07D6D41D632ADE00A05CA6 /* radio.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C07D6D31D632ADE00A05CA6 /* radio.png */; };
 		7C45690B1D5DD605004E0D40 /* fair.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C4569031D5DD605004E0D40 /* fair.png */; };
 		7C45690C1D5DD605004E0D40 /* fun.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C4569041D5DD605004E0D40 /* fun.png */; };
 		7C45690D1D5DD605004E0D40 /* monument.png in Resources */ = {isa = PBXBuildFile; fileRef = 7C4569051D5DD605004E0D40 /* monument.png */; };
@@ -54,6 +55,7 @@
 		1C9B467E1D2945F200D5C7EF /* ShowBtn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShowBtn.m; sourceTree = "<group>"; };
 		1C9B46811D294A3D00D5C7EF /* MenuView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuView.h; sourceTree = "<group>"; };
 		1C9B46821D294A3D00D5C7EF /* MenuView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuView.m; sourceTree = "<group>"; };
+		7C07D6D31D632ADE00A05CA6 /* radio.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = radio.png; sourceTree = "<group>"; };
 		7C4569031D5DD605004E0D40 /* fair.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fair.png; sourceTree = "<group>"; };
 		7C4569041D5DD605004E0D40 /* fun.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fun.png; sourceTree = "<group>"; };
 		7C4569051D5DD605004E0D40 /* monument.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = monument.png; sourceTree = "<group>"; };
@@ -165,6 +167,7 @@
 				7C4569081D5DD605004E0D40 /* transport_1434.png */,
 				7C4569091D5DD605004E0D40 /* transport_1435.png */,
 				7C45690A1D5DD605004E0D40 /* transport_965.png */,
+				7C07D6D31D632ADE00A05CA6 /* radio.png */,
 			);
 			path = image;
 			sourceTree = "<group>";
@@ -256,6 +259,7 @@
 				7C45690F1D5DD605004E0D40 /* transport_1432.png in Resources */,
 				1C9B46681D29427800D5C7EF /* LaunchScreen.xib in Resources */,
 				1C9B46651D29427800D5C7EF /* Images.xcassets in Resources */,
+				7C07D6D41D632ADE00A05CA6 /* radio.png in Resources */,
 				7C4569121D5DD605004E0D40 /* transport_965.png in Resources */,
 				7C45690D1D5DD605004E0D40 /* monument.png in Resources */,
 				7C4569101D5DD605004E0D40 /* transport_1434.png in Resources */,

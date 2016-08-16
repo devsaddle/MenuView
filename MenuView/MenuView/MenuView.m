@@ -51,13 +51,15 @@
 - (void)setSzie:(CGSize)imageSize;
 - (void)setImageEdgeInsets:(UIEdgeInsets)edgeInsets;
 - (void)setTitleEdgeInsets:(UIEdgeInsets)edgeInsets;
+- (void)setSelectedStyle:(id)model;
+
 @end
 
 
 
 @implementation MenuView
 
-- (instancetype)initWithFrame:(CGRect)frame inView:(UIView *)fromeView {
+- (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
         
@@ -178,9 +180,11 @@
     cell.selectedBackgroundView = seletView;
     if ([cell isKindOfClass:[MenuCell class]]) {
         [cell setData:[[self dataSorce] objectAtIndex:indexPath.row]];
+        [cell setSelectedStyle:[self selectedStyleForIndexPath:indexPath]];
         [cell setSzie:[self imageSizeForIndexPath:indexPath]];
         [cell setTitleEdgeInsets:[self titleEdgeInsetsForIndexPath:indexPath]];
         [cell setImageEdgeInsets:[self imageEdgeInsetsForIndexPath:indexPath]];
+       
     }
     return cell;
 }
@@ -286,7 +290,16 @@
     return UIEdgeInsetsZero;
 }
 
+- (id)selectedStyleForIndexPath:(NSIndexPath *)indexPath {
 
+    if (self.selectedIndex == indexPath) {
+        if (self.dataSource && [self.dataSource respondsToSelector:@selector(menuView:selectStyleForRowAtIndexPath:)]) {
+            return [self.dataSource menuView:self selectStyleForRowAtIndexPath:indexPath];
+        }
+    }
+    
+    return nil;
+}
 @end
 
 
@@ -401,7 +414,7 @@
 }
 - (void)initViews {
     _textLable = [[UILabel alloc] initWithFrame:self.bounds];
-    [_textLable setTextColor:[UIColor whiteColor]];
+    [_textLable setTextColor:[UIColor blackColor]];
     [_textLable setTextAlignment:NSTextAlignmentCenter];
     [_textLable setLineBreakMode:NSLineBreakByTruncatingTail];
     [_textLable setBackgroundColor:[UIColor clearColor]];
@@ -458,6 +471,14 @@
             
         };
 
+    }
+}
+
+- (void)setSelectedStyle:(id)model {
+    if ([model isKindOfClass:[UIImage class]]) {
+        _imageView.image = model;
+    } else if ([model isKindOfClass:[UIColor class]]) {
+        _textLable.textColor = model;
     }
 }
 @end
