@@ -7,13 +7,16 @@
 //
 
 #import "MenuView.h"
-#define leftMargin   30     // 箭头左距离边缘距离
-#define rightMargin  30     // 箭头右距离边缘距离
+#define leftMargin    30     // 箭头左距离边缘距离
+#define rightMargin   30     // 箭头右距离边缘距离
 #define arrowHeight   10    // 箭头内部高度
 #define arrowMargin   10    // 箭头内部中心间距(三角底边长度一半)
 #define coverViewRadius  3  // 圆角
-#define cellHeight      44    // cell 高度
-#define cellContentSize  CGSizeMake(100, 40)
+#define cellHeight       44    // cell 高度
+#define cellContentSize     CGSizeMake(100, 40)
+#define menufillColor       [UIColor whiteColor]  // 默认填充颜色 （内部使用，外部已提供对应接口）
+#define groundColor         [UIColor colorWithWhite:0.286 alpha:0.8]  // 默认背景颜色
+#define groundColorY        0   // 背景颜色预留区域
 
 @interface MenuCoverView : UIView
 {
@@ -25,6 +28,7 @@
 
 @interface MenuView ()<UICollectionViewDelegate,UICollectionViewDataSource>
 {
+    CALayer *_groundLayer;
     UITableView *_tableView;
     MenuCoverView *_coverView;
     UICollectionView *_collectionView;
@@ -71,6 +75,8 @@
         .origin.y = y + 3,
         .size = {_coverView.frame.size.width,_coverView.frame.size.height - y - 5}
     };
+    
+    _groundLayer.frame = CGRectMake(0, groundColorY, self.frame.size.width,  self.frame.size.height);
 
 }
 - (void)show {
@@ -83,17 +89,32 @@
     self.alpha = 0.0;
     [window addSubview:self];
 
-    [UIView animateWithDuration:0.2 animations:^{
+    [UIView animateWithDuration:0.1 animations:^{
         self.alpha = 1.0;
+        _groundLayer.backgroundColor = groundColor.CGColor;
     } completion:^(BOOL finished) {
     }];
     
+}
+
+- (void)showInView:(UIView *)view {
+    if (_isShowing) return;
+    _isShowing = YES;
     
+    self.frame = view.bounds;
+    self.alpha = 0.0;
+    [view addSubview:self];
+    
+    [UIView animateWithDuration:0.1 animations:^{
+        self.alpha = 1.0;
+        _groundLayer.backgroundColor = groundColor.CGColor;
+    } completion:^(BOOL finished) {
+    }];
 }
 
 - (void)dismiss {
     
-    [UIView animateWithDuration:0.2 animations:^{
+    [UIView animateWithDuration:0.1 animations:^{
         self.alpha = 0.0;
     } completion:^(BOOL finished) {
         [self removeFromSuperview];
@@ -102,6 +123,11 @@
 
 
 - (void)creatSubView {
+    
+    CALayer *layer = [CALayer layer];
+    [self.layer addSublayer:layer];
+    _groundLayer = layer;
+    
     MenuCoverView *view = [[MenuCoverView alloc] initWithFrame:self.frame];
     view.backgroundColor = [UIColor clearColor];
     view->_arrowDirection = self.arrowDirection;
@@ -125,9 +151,17 @@
     [self dismiss];
 }
 
+#pragma mark - Lazy Load
+- (UIColor *)fillColor {
+    if (!_fillColor) {
+        _fillColor = menufillColor;
+    }
+    return _fillColor;
+}
 
 
 #pragma mark - UICollectionViewDataSource
+
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     if (self.dataSource && [self.dataSource respondsToSelector:@selector(numberOfRowsForMenuView:)]) {
        return  [self.dataSource numberOfRowsForMenuView:self];
@@ -397,6 +431,7 @@
 - (void)setSzie:(CGSize)imageSize {
     if (!CGSizeEqualToSize(imageSize, CGSizeZero)) {
         _imageView.frame = (CGRect){0, 0, imageSize};
+        _imageView.center = self.contentView.center;
     }
 }
 

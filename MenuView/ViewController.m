@@ -21,6 +21,12 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     [self.view addSubview:self.showBtn];
+    
+    
+    UILabel *lab = [[UILabel alloc] initWithFrame:CGRectMake(100, 100, 100, 50)];
+    lab.textColor = [UIColor redColor];
+    lab.text = @"这是一段测试文字";
+    [self.view addSubview:lab];
 
 }
 
@@ -59,10 +65,9 @@
     CGFloat y = self.showBtn.frame.origin.y + self.showBtn.frame.size.height;
 
     NSLog(@"---x:%f--y:%f",x,y);
-
+    
     MenuView *meunView = [[MenuView alloc] initWithFrame:CGRectMake(x, y, 137, 200)];
-    meunView.arrowDirection = ArrowDirectionMiddle;
-    meunView.fillColor = [UIColor colorWithWhite:0.286 alpha:1.0];
+    meunView.arrowDirection = ArrowDirectionDefault;
     meunView.dataSource = self;
     meunView.delegate = self;
     [meunView show];
@@ -100,7 +105,14 @@
 //}
 
 - (CGSize)menuView:(MenuView *)menuView imageSizeForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return CGSizeMake(20, 30);
+    if (indexPath.row == 0) {
+        return CGSizeMake(10, 20);
+    } else if(indexPath.row == 1) {
+        return CGSizeMake(15, 25);
+    } else {
+        return CGSizeMake(20, 30);
+
+    }
 }
 
 - (void)menuView:(MenuView *)menuView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {

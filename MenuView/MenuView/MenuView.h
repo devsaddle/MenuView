@@ -64,10 +64,16 @@ typedef NS_ENUM(NSInteger, ArrowDirection) {
 
 @property(nonatomic,readonly) NSInteger numberOfButtons;
 
+/*!
+ *  填充颜色
+ *  默认 白色
+ */
 @property(nonatomic,strong) UIColor *fillColor;
 
-
-// ArrowDirection -style defaults to ArrowDirectionDefault
+/*!
+ *  箭头方向
+ *  默认 ArrowDirectionDefault
+ */
 @property(nonatomic,assign) ArrowDirection arrowDirection;
 
 // MenuViewStyle -style defaults to MenuViewStyleSingleRank
@@ -76,8 +82,7 @@ typedef NS_ENUM(NSInteger, ArrowDirection) {
 
 // shows popup menu animated.
 - (void)show;
-
-
+- (void)showInView:(UIView *)view;
 @end
 
 
