@@ -32,7 +32,6 @@
 #pragma mark - Lazy Load
 - (UIButton *)showBtn {
     if (_showBtn == nil) {
-        
         _showBtn = [ShowBtn buttonWithType:UIButtonTypeCustom];
         _showBtn.frame = CGRectMake(50, 50, 70, 45);
         [_showBtn setTitle:@"点击" forState:UIControlStateNormal];
@@ -46,7 +45,7 @@
         _showBtn.layer.shadowOpacity = 0.8;
         _showBtn.showsTouchWhenHighlighted = YES;
         [_showBtn addTarget:self action:@selector(btnClick) forControlEvents:UIControlEventTouchUpInside];
-    
+
 
     }
     return _showBtn;
@@ -55,6 +54,7 @@
 #pragma mark - Click
 
 - (void)btnClick {
+
     CGFloat x = self.showBtn.frame.origin.x + self.showBtn.frame.size.width/2;
     CGFloat y = self.showBtn.frame.origin.y + self.showBtn.frame.size.height;
 
