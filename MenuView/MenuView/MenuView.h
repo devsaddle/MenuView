@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#define collectionCellIdentifier   @"MenuViewCellIdentifier"    // cell Identifier
+
 // MenuView 显示类型
 typedef NS_ENUM(NSInteger, MenuViewStyle) {
     MenuViewStyleSingleRank = 0, // 单列显示
@@ -31,45 +33,61 @@ typedef NS_ENUM(NSInteger, ArrowDirection) {
 
 - (NSInteger)numberOfRowsForMenuView:(MenuView *)menuView;
 - (NSArray *)dataForMenuView:(MenuView *)menuView;
+
 @optional
-- (UICollectionViewCell *)menuView:(MenuView *)menuView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
+
 - (CGFloat)menuView:(MenuView *)menuView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
+- (CGSize)menuView:(MenuView *)menuView imageSizeForRowAtIndexPath:(NSIndexPath *)indexPath;
+
+/*!
+ *  选中后的cell 显示样式
+ *
+ *  @return UIImage/UIColor
+ */
+- (id)menuView:(MenuView *)menuView selectStyleForRowAtIndexPath:(NSIndexPath *)indexPath;
+
+/*!
+ *  自定义cell
+ *  必须注册 cell 的 Identifier 为 collectionCellIdentifier
+ */
+- (UICollectionViewCell *)contentCellWithCollectionView:(UICollectionView *)collectionView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
 
 #pragma mark - MenuViewDelegate
 @protocol MenuViewDelegate <NSObject>
+
 @optional
 
-- (void)menuView:(MenuView *)menuView clickedButtonAtIndex:(NSInteger)buttonIndex;
-- (void)menuViewDismiss:(MenuView *)menuView;
-
-
-- (void)willPresentMenuView:(MenuView *)menuView;  // before animation and showing view
-- (void)didPresentMenuView:(MenuView *)menuView;   // after animation
-
-
-- (void)menuView:(MenuView *)menuView willDismissWithButtonIndex:(NSInteger)buttonIndex; // before animation and hiding view
-- (void)menuView:(MenuView *)menuView didDismissWithButtonIndex:(NSInteger)buttonIndex;  // after animation
-
 - (void)menuView:(MenuView *)menuView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (UIEdgeInsets)menuView:(MenuView *)menuView imageEdgeInsetsAtIndexPath:(NSIndexPath *)indexPath;
+- (UIEdgeInsets)menuView:(MenuView *)menuView titleEdgeInsetsAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
 
-@interface MenuView : UIView
 
-- (instancetype)initWithFrame:(CGRect)frame inView:(UIView *)fromeView;
+@interface MenuView : UIView
 
 @property(nonatomic,assign) id<MenuViewDelegate> delegate;          // weak reference
 @property(nonatomic,assign) id<MenuViewDataSource> dataSource;       // weak reference
 
-@property(nonatomic,readonly) NSInteger numberOfButtons;
-
+/*!
+ *  填充颜色
+ *  默认 白色
+ */
 @property(nonatomic,strong) UIColor *fillColor;
 
-
-// ArrowDirection -style defaults to ArrowDirectionDefault
+/*!
+ *  箭头方向
+ *  默认 ArrowDirectionDefault
+ */
 @property(nonatomic,assign) ArrowDirection arrowDirection;
+
+/**
+ *  选中哪行
+ *  默认 无选中
+ */
+@property (nonatomic, assign) NSIndexPath *selectedIndex;
 
 // MenuViewStyle -style defaults to MenuViewStyleSingleRank
 @property(nonatomic,assign) MenuViewStyle menuStyle;
@@ -77,8 +95,7 @@ typedef NS_ENUM(NSInteger, ArrowDirection) {
 
 // shows popup menu animated.
 - (void)show;
-
-
+- (void)showInView:(UIView *)view;
 @end
 
 

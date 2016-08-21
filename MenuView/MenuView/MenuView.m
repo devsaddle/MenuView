@@ -7,14 +7,16 @@
 //
 
 #import "MenuView.h"
-#define leftMargin   30     // 箭头左距离边缘距离
-#define rightMargin  30     // 箭头右距离边缘距离
+#define leftMargin    30     // 箭头左距离边缘距离
+#define rightMargin   30     // 箭头右距离边缘距离
 #define arrowHeight   10    // 箭头内部高度
 #define arrowMargin   10    // 箭头内部中心间距(三角底边长度一半)
 #define coverViewRadius  3  // 圆角
-#define collectionCellIden   @"MenuViewCellIden"    // cell Identifier
-#define cellHeight      44    // cell 高度
-#define cellContentSize  CGSizeMake(100, 40)
+#define cellHeight       44    // cell 高度
+#define cellContentSize     CGSizeMake(100, 40)
+#define menufillColor       [UIColor whiteColor]  // 默认填充颜色 （内部使用，外部已提供对应接口）
+#define groundColor         [UIColor colorWithWhite:0.286 alpha:0.8]  // 默认背景颜色
+#define groundColorY        0   // 背景颜色预留区域
 
 @interface MenuCoverView : UIView
 {
@@ -26,6 +28,7 @@
 
 @interface MenuView ()<UICollectionViewDelegate,UICollectionViewDataSource>
 {
+    CALayer *_groundLayer;
     UITableView *_tableView;
     MenuCoverView *_coverView;
     UICollectionView *_collectionView;
@@ -39,15 +42,24 @@
 {
     @private
     UILabel *_textLable;
+    UIImageView *_imageView;
     CALayer *_separateLayer;
 }
 + (instancetype)initMenuCellWithCollectioView:(UICollectionView *)collectionView forIndexPath:(NSIndexPath *)indexPath;
-- (void)setData:(NSString *)str;
+
+- (void)setData:(id)data;
+- (void)setSzie:(CGSize)imageSize;
+- (void)setImageEdgeInsets:(UIEdgeInsets)edgeInsets;
+- (void)setTitleEdgeInsets:(UIEdgeInsets)edgeInsets;
+- (void)setSelectedStyle:(id)model;
+
 @end
+
+
 
 @implementation MenuView
 
-- (instancetype)initWithFrame:(CGRect)frame inView:(UIView *)fromeView {
+- (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
         
@@ -65,24 +77,59 @@
         .origin.y = y + 3,
         .size = {_coverView.frame.size.width,_coverView.frame.size.height - y - 5}
     };
+    
+    _groundLayer.frame = CGRectMake(0, groundColorY, self.frame.size.width,  self.frame.size.height);
 
 }
 - (void)show {
-  
+    
     if (_isShowing) return;
     _isShowing = YES;
-    [UIView animateWithDuration:0.35f delay:0 usingSpringWithDamping:0.9f initialSpringVelocity:0.7f options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionLayoutSubviews animations:^{
-        
-        UIWindow *window = [UIApplication sharedApplication].keyWindow;
-        self.frame = window.bounds;
+
+    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+    self.frame = window.bounds;
+    self.alpha = 0.0;
+    [window addSubview:self];
+
+    [UIView animateWithDuration:0.1 animations:^{
         self.alpha = 1.0;
-        [window addSubview:self];
-        
-    } completion:NULL];
+        _groundLayer.backgroundColor = groundColor.CGColor;
+    } completion:^(BOOL finished) {
+    }];
     
 }
 
+- (void)showInView:(UIView *)view {
+    if (_isShowing) return;
+    _isShowing = YES;
+    
+    self.frame = view.bounds;
+    self.alpha = 0.0;
+    [view addSubview:self];
+    
+    [UIView animateWithDuration:0.1 animations:^{
+        self.alpha = 1.0;
+        _groundLayer.backgroundColor = groundColor.CGColor;
+    } completion:^(BOOL finished) {
+    }];
+}
+
+- (void)dismiss {
+    
+    [UIView animateWithDuration:0.1 animations:^{
+        self.alpha = 0.0;
+    } completion:^(BOOL finished) {
+        [self removeFromSuperview];
+    }];
+}
+
+
 - (void)creatSubView {
+    
+    CALayer *layer = [CALayer layer];
+    [self.layer addSublayer:layer];
+    _groundLayer = layer;
+    
     MenuCoverView *view = [[MenuCoverView alloc] initWithFrame:self.frame];
     view.backgroundColor = [UIColor clearColor];
     view->_arrowDirection = self.arrowDirection;
@@ -97,19 +144,26 @@
     collectionView.backgroundColor =  [UIColor clearColor];
     collectionView.delegate = self;
     collectionView.dataSource = self;
-    [collectionView registerClass:[MenuCell class] forCellWithReuseIdentifier:collectionCellIden];
     [view addSubview:collectionView];
     _collectionView = collectionView;
     
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    [self removeFromSuperview];
+    [self dismiss];
+}
+
+#pragma mark - Lazy Load
+- (UIColor *)fillColor {
+    if (!_fillColor) {
+        _fillColor = menufillColor;
+    }
+    return _fillColor;
 }
 
 
-
 #pragma mark - UICollectionViewDataSource
+
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     if (self.dataSource && [self.dataSource respondsToSelector:@selector(numberOfRowsForMenuView:)]) {
        return  [self.dataSource numberOfRowsForMenuView:self];
@@ -126,6 +180,11 @@
     cell.selectedBackgroundView = seletView;
     if ([cell isKindOfClass:[MenuCell class]]) {
         [cell setData:[[self dataSorce] objectAtIndex:indexPath.row]];
+        [cell setSelectedStyle:[self selectedStyleForIndexPath:indexPath]];
+        [cell setSzie:[self imageSizeForIndexPath:indexPath]];
+        [cell setTitleEdgeInsets:[self titleEdgeInsetsForIndexPath:indexPath]];
+        [cell setImageEdgeInsets:[self imageEdgeInsetsForIndexPath:indexPath]];
+       
     }
     return cell;
 }
@@ -159,6 +218,7 @@
 //}
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
+    [self dismiss];
     if (self.delegate && [self.delegate respondsToSelector:@selector(menuView:didSelectRowAtIndexPath:)]) {
         [self.delegate menuView:self didSelectRowAtIndexPath:indexPath];
     }
@@ -185,11 +245,13 @@
         height = [self.dataSource menuView:self heightForRowAtIndexPath:indexPath];
     }
     
-    if (self.dataSource && [self.dataSource respondsToSelector:@selector(menuView:cellForRowAtIndexPath:)]) {
-        contenView = [self.dataSource menuView:self cellForRowAtIndexPath:indexPath];
+    if (self.dataSource && [self.dataSource respondsToSelector:@selector(contentCellWithCollectionView:cellForRowAtIndexPath:)]) {
+        contenView = [self.dataSource contentCellWithCollectionView:collectionView cellForRowAtIndexPath:indexPath];
+
     } else {
         contenView = [MenuCell initMenuCellWithCollectioView:collectionView forIndexPath:indexPath];
         contenView.backgroundColor = self.fillColor;
+
     }
     return contenView;
 }
@@ -204,6 +266,39 @@
        return [self.dataSource dataForMenuView:self];
     }
     return @[];
+}
+
+
+- (CGSize)imageSizeForIndexPath:(NSIndexPath *)indexPath {
+    if (self.dataSource && [self.dataSource respondsToSelector:@selector(menuView:imageSizeForRowAtIndexPath:)]){
+        return [self.dataSource menuView:self imageSizeForRowAtIndexPath:indexPath];
+    }
+    return CGSizeZero;
+}
+
+- (UIEdgeInsets)imageEdgeInsetsForIndexPath:(NSIndexPath *)indexPath {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(menuView:imageEdgeInsetsAtIndexPath:)]) {
+        return [self.delegate menuView:self imageEdgeInsetsAtIndexPath:indexPath];
+    }
+    return UIEdgeInsetsZero;
+}
+
+- (UIEdgeInsets)titleEdgeInsetsForIndexPath:(NSIndexPath *)indexPath {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(menuView:titleEdgeInsetsAtIndexPath:)]) {
+        return [self.delegate menuView:self titleEdgeInsetsAtIndexPath:indexPath];
+    }
+    return UIEdgeInsetsZero;
+}
+
+- (id)selectedStyleForIndexPath:(NSIndexPath *)indexPath {
+
+    if (self.selectedIndex == indexPath) {
+        if (self.dataSource && [self.dataSource respondsToSelector:@selector(menuView:selectStyleForRowAtIndexPath:)]) {
+            return [self.dataSource menuView:self selectStyleForRowAtIndexPath:indexPath];
+        }
+    }
+    
+    return nil;
 }
 @end
 
@@ -289,10 +384,14 @@
 
 @end
 
+
+
+
 @implementation MenuCell
 
 + (instancetype)initMenuCellWithCollectioView:(UICollectionView *)collectionView forIndexPath:(NSIndexPath *)indexPath{
-        MenuCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:collectionCellIden forIndexPath:indexPath];
+    [collectionView registerClass:[MenuCell class] forCellWithReuseIdentifier:collectionCellIdentifier];
+        MenuCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:collectionCellIdentifier forIndexPath:indexPath];
     return cell;
 }
 
@@ -315,12 +414,17 @@
 }
 - (void)initViews {
     _textLable = [[UILabel alloc] initWithFrame:self.bounds];
-    [_textLable setTextColor:[UIColor whiteColor]];
+    [_textLable setTextColor:[UIColor blackColor]];
     [_textLable setTextAlignment:NSTextAlignmentCenter];
     [_textLable setLineBreakMode:NSLineBreakByTruncatingTail];
     [_textLable setBackgroundColor:[UIColor clearColor]];
     [_textLable setFont:[UIFont systemFontOfSize:14.0]];
     [self.contentView addSubview:_textLable];
+    
+    
+    _imageView = [[UIImageView alloc] initWithFrame:CGRectZero];
+//    _imageView.contentMode = UIViewContentModeScaleAspectFill;
+    [self.contentView addSubview:_imageView];
     
     
     _separateLayer = [CALayer layer];
@@ -329,7 +433,52 @@
 }
 
 
-- (void)setData:(NSString *)str {
-    _textLable.text = str;
+- (void)setData:(id)data {
+    if ([data isKindOfClass:[NSString class]]) {
+        _textLable.text = [NSString stringWithFormat:@"%@",data];
+    } else if ([data isKindOfClass:[UIImage class]]) {
+        _imageView.image = data;
+    }
+}
+
+- (void)setSzie:(CGSize)imageSize {
+    if (!CGSizeEqualToSize(imageSize, CGSizeZero)) {
+        _imageView.frame = (CGRect){0, 0, imageSize};
+        _imageView.center = self.contentView.center;
+    }
+}
+
+- (void)setImageEdgeInsets:(UIEdgeInsets)edgeInsets {
+    if (!UIEdgeInsetsEqualToEdgeInsets(edgeInsets, UIEdgeInsetsZero)) {
+        _imageView.frame = (CGRect) {
+            .origin.x = edgeInsets.left,
+            .origin.y = edgeInsets.top,
+            .size.width = self.frame.size.width - edgeInsets.left - edgeInsets.right,
+            .size.height = self.frame.size.height - edgeInsets.bottom - edgeInsets.top
+
+        };
+    }
+}
+
+
+- (void)setTitleEdgeInsets:(UIEdgeInsets)edgeInsets {
+    if (!UIEdgeInsetsEqualToEdgeInsets(edgeInsets, UIEdgeInsetsZero)) {
+        _textLable.frame = (CGRect) {
+            .origin.x = edgeInsets.left,
+            .origin.y = edgeInsets.top,
+            .size.width = self.frame.size.width - edgeInsets.left - edgeInsets.right,
+            .size.height = self.frame.size.height - edgeInsets.bottom - edgeInsets.top
+            
+        };
+
+    }
+}
+
+- (void)setSelectedStyle:(id)model {
+    if ([model isKindOfClass:[UIImage class]]) {
+        _imageView.image = model;
+    } else if ([model isKindOfClass:[UIColor class]]) {
+        _textLable.textColor = model;
+    }
 }
 @end
